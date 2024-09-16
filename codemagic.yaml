@@ -1,0 +1,27 @@
+workflows:
+  ios-workflow:
+    name: ios-workflow
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    environment:
+      vars:
+        XCODE_SCHEME: "Runner"
+      flutter: stable
+      xcode: 15.4
+      cocoapods: default
+    scripts:
+      - name: Run Flutter pub get
+        script: |
+          flutter pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Build unsigned .app
+        script: |
+          xcodebuild -workspace "ios/Runner.xcworkspace" \
+            -scheme "Runner" \
+            -configuration "Debug" \
+            -sdk iphonesimulator \
+            -derivedDataPath ios/output
+    artifacts:
+      - ios/output/Build/Products/Debug-iphonesimulator/Runner.app  
