@@ -16,12 +16,16 @@ workflows:
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
-      - name: Build unsigned .app
-        script: |
-          xcodebuild -workspace "ios/Runner.xcworkspace" \
-            -scheme "Runner" \
-            -configuration "Debug" \
+      - name: Build the .app
+        script: | 
+          xcodebuild build \
+            -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
             -sdk iphonesimulator \
-            -derivedDataPath ios/output
+            -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=18.0' \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
     artifacts:
       - ios/output/Build/Products/Debug-iphonesimulator/Runner.app  
