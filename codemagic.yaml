@@ -9,7 +9,6 @@ workflows:
           bundle_identifier: com.example.apppreview
       vars:
         XCODE_SCHEME: "Runner"
-      flutter: stable
       xcode: 15.4
       cocoapods: default
     scripts:
