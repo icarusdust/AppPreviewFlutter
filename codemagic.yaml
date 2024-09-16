@@ -30,4 +30,4 @@ workflows:
               CODE_SIGNING_REQUIRED=NO \
               CODE_SIGNING_ALLOWED=NO
     artifacts:
-      - ios/output/Build/Products/Debug-iphonesimulator/Runner.app  
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app  
