@@ -26,4 +26,4 @@ workflows:
             -sdk iphonesimulator \
             -derivedDataPath ios/output
     artifacts:
-        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app  
+        - ios/output/Build/Products/Debug-iphonesimulator/Runner.app 
