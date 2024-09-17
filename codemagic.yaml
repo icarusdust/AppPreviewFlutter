@@ -22,7 +22,7 @@ workflows:
         script:  xcode-project use-profiles
       - name: Build
         script: |
-          flutter build ios --debug
+          flutter build ios --no-codesign
         # xcodebuild -workspace "ios/Runner.xcworkspace" \
         #   -scheme "Runner" \
         #   -configuration "Debug" \
