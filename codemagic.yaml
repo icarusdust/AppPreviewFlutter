@@ -9,8 +9,7 @@ workflows:
           bundle_identifier: com.example.apppreview
       vars:
         XCODE_SCHEME: "Runner"
-      xcode: 15.4
-
+      xcode: 16.0
       cocoapods: default
     scripts:
       - name: Run Flutter pub get
