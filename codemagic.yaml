@@ -20,24 +20,22 @@ workflows:
           find . -name "Podfile" -execdir pod install \;
       - name: Build
         script: |
-          flutter build ios --no-codesign
+            xcodebuild -workspace "ios/Runner.xcworkspace" \
+              -scheme "Runner" \
+              -configuration "Debug" \
+              -sdk iphonesimulator \
+              -derivedDataPath ios/output
       - name: Sim
         script: |
-          SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
-          echo "Booting device $SIMULATOR_ID"
-          export SIMULATOR_ID=$SIMULATOR_ID
-          xcrun simctl boot "$SIMULATOR_ID"
-          xcrun simctl install "$SIMULATOR_ID" build/ios/iphoneos/Runner.app
-          xcrun simctl listapps $SIMULATOR_ID
-          xcrun simctl list devices | grep "$SIMULATOR_ID"
-          xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
-          xcrun simctl launch D99892F6-4608-4380-A3B3-BECB00E243B7 com.example.apppreview
-      # - name: Build unsigned .app
-      #   script: |
-      #     xcodebuild -workspace "ios/Runner.xcworkspace" \
-      #       -scheme "Runner" \
-      #       -configuration "Debug" \
-      #       -sdk iphonesimulator \
-      #       -derivedDataPath ios/output
+            SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
+            echo "Booting device $SIMULATOR_ID"
+            export SIMULATOR_ID=$SIMULATOR_ID
+            xcrun simctl boot "$SIMULATOR_ID"
+            xcrun simctl install "$SIMULATOR_ID" ios/output/Build/Products/Debug-iphonesimulator/Runner.app
+            xcrun simctl listapps $SIMULATOR_ID
+            xcrun simctl list devices | grep "$SIMULATOR_ID"
+            xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
+            xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
+
     artifacts:
         - ios/output/Build/Products/Debug-iphonesimulator/Runner.app 
