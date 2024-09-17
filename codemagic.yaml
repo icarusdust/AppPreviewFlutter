@@ -32,7 +32,7 @@ workflows:
             echo "Booting device $SIMULATOR_ID"
             export SIMULATOR_ID=$SIMULATOR_ID
             xcrun simctl boot "$SIMULATOR_ID"
-            xcrun simctl install "$SIMULATOR_ID" ios/output/Build/Products/Debug-iphonesimulator/Runner.app
+            xcrun simctl install "$SIMULATOR_ID" build/ios/iphoneos/Runner.app
             xcrun simctl listapps $SIMULATOR_ID
             xcrun simctl list devices | grep "$SIMULATOR_ID"
             xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
