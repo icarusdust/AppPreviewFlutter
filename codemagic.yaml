@@ -18,6 +18,8 @@ workflows:
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
+      - name: Profile
+        script:  xcode-project use-profiles
       - name: Build
         script: |
           flutter build ios --debug
