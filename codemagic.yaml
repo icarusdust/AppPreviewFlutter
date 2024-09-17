@@ -19,6 +19,9 @@ workflows:
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
+      - name: Build
+        script: |
+          flutter build ios --no-codesign
       - name: Sim
         script: |
           SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
@@ -30,12 +33,12 @@ workflows:
           xcrun simctl list devices | grep "$SIMULATOR_ID"
           xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
           xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
-      - name: Build unsigned .app
-        script: |
-          xcodebuild -workspace "ios/Runner.xcworkspace" \
-            -scheme "Runner" \
-            -configuration "Debug" \
-            -sdk iphonesimulator \
-            -derivedDataPath ios/output
+      # - name: Build unsigned .app
+      #   script: |
+      #     xcodebuild -workspace "ios/Runner.xcworkspace" \
+      #       -scheme "Runner" \
+      #       -configuration "Debug" \
+      #       -sdk iphonesimulator \
+      #       -derivedDataPath ios/output
     artifacts:
         - ios/output/Build/Products/Debug-iphonesimulator/Runner.app 
