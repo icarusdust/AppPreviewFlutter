@@ -20,7 +20,7 @@ workflows:
           find . -name "Podfile" -execdir pod install \;
       - name: Build
         script: |
-          flutter build ios
+          flutter build ios --debug
         # xcodebuild -workspace "ios/Runner.xcworkspace" \
         #   -scheme "Runner" \
         #   -configuration "Debug" \
