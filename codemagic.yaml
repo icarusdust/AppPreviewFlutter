@@ -32,7 +32,7 @@ workflows:
           xcrun simctl listapps $SIMULATOR_ID
           xcrun simctl list devices | grep "$SIMULATOR_ID"
           xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
-          xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
+          xcrun simctl launch D99892F6-4608-4380-A3B3-BECB00E243B7 com.example.apppreview
       # - name: Build unsigned .app
       #   script: |
       #     xcodebuild -workspace "ios/Runner.xcworkspace" \
