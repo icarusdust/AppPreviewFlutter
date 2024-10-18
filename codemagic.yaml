@@ -41,4 +41,4 @@ workflows:
       #       xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
 
     artifacts:
-        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app 
+        - build/ios/iphonesimulator/Runner.app
