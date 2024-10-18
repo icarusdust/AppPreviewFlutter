@@ -22,11 +22,12 @@ workflows:
         script:  xcode-project use-profiles
       - name: Build
         script: |
-          xcodebuild -workspace "ios/Runner.xcworkspace" \
-            -scheme "Runner" \
-            -configuration "Debug" \
-            -sdk iphonesimulator \
-            -derivedDataPath ios/output
+         flutter build ios --debug --simulator
+    # xcodebuild -workspace "ios/Runner.xcworkspace" \
+    #   -scheme "Runner" \
+    #   -configuration "Debug" \
+    #   -sdk iphonesimulator \
+    #   -derivedDataPath ios/output
       # - name: Sim
       #   script: |
       #       SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
@@ -40,4 +41,4 @@ workflows:
       #       xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
 
     artifacts:
-        - ios/output/Build/Products/Debug-iphonesimulator/Runner.app 
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app 
