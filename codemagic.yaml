@@ -15,9 +15,9 @@ workflows:
       - name: Run Flutter pub get
         script: |
           flutter pub get
-      - name: Install pods
-        script: |
-          find . -name "Podfile" -execdir pod install \;
+      # - name: Install pods
+      #   script: |
+      #     find . -name "Podfile" -execdir pod install \;
       - name: Profile
         script:  xcode-project use-profiles
       - name: Build
