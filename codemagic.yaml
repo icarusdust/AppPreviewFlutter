@@ -22,7 +22,9 @@ workflows:
         script:  xcode-project use-profiles
       - name: Build
         script: |
-         flutter build ios --debug --simulator
+             flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+  # flutter build ios --debug --simulator
     # xcodebuild -workspace "ios/Runner.xcworkspace" \
     #   -scheme "Runner" \
     #   -configuration "Debug" \
