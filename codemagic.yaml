@@ -23,7 +23,7 @@ workflows:
       - name: Build
         script: |
              flutter build ipa --release \
-            --export-options-plist=/Users/builder/export_options.plist
+               --export-options-plist=/Users/builder/export_options.plist
   # flutter build ios --debug --simulator
     # xcodebuild -workspace "ios/Runner.xcworkspace" \
     #   -scheme "Runner" \
