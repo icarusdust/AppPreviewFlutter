@@ -12,9 +12,9 @@ workflows:
       xcode: 15.4
       cocoapods: default
     scripts:
-      - name: Run Flutter pub get
-        script: |
-          flutter pub get
+      # - name: Run Flutter pub get
+      #   script: |
+      #     flutter pub get
       # - name: Install pods
       #   script: |
       #     find . -name "Podfile" -execdir pod install \;
