@@ -9,15 +9,14 @@ workflows:
           bundle_identifier: com.ios.apppreview
       vars:
         XCODE_SCHEME: "Runner"
-      xcode: 15.4
       cocoapods: default
     scripts:
-      # - name: Run Flutter pub get
-      #   script: |
-      #     flutter pub get
-      # - name: Install pods
-      #   script: |
-      #     find . -name "Podfile" -execdir pod install \;
+      - name: Run Flutter pub get
+        script: |
+          flutter pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
       - name: Profile
         script:  xcode-project use-profiles
       - name: Build
@@ -44,3 +43,4 @@ workflows:
 
     artifacts:
         - build/ios/iphonesimulator/Runner.app
+        - build/ios/ipa/*.ipa
