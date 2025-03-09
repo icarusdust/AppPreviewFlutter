@@ -4,8 +4,10 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 120
     environment:
+      groups:
+        - firebase
       ios_signing:
-          distribution_type: app_store
+          distribution_type: development
           bundle_identifier: com.ios.apppreview
       vars:
         XCODE_SCHEME: "Runner"
@@ -44,3 +46,10 @@ workflows:
     artifacts:
         - build/ios/iphonesimulator/Runner.app
         - build/ios/ipa/*.ipa
+    publishing:
+      firebase:
+         firebase_token: $FIREBASE_TOKEN
+         ios:
+            app_id: 1:1000832666927:ios:9fa19fbcf907fc4a11e5da
+            groups: 
+              - mars
