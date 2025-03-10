@@ -12,9 +12,9 @@ workflows:
       vars:
         XCODE_SCHEME: "Runner"
       cocoapods: default
-    cache:
-      cache_paths:
-         - ~/.gradle/caches
+      cache:
+        cache_paths:
+           - ~/.gradle/caches
     scripts:
       - name: Run Flutter pub get
         script: |
