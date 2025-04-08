@@ -13,7 +13,7 @@ workflows:
       - name: Fetch Mac App Distribution certificate and Mac App Store profile
         script: |
           app-store-connect fetch-signing-files \
-            $BUNDLE_ID \
+            com.ios.apppreview \
             --platform MAC_OS \
             --type MAC_APP_STORE \
             --create
