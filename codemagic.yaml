@@ -1,58 +1,127 @@
+
 workflows:
-  ios-workflow:
-    name: ios-workflow
+  macOS-workflow:
+    name: macOS Workflow
     instance_type: mac_mini_m2
-    max_build_duration: 120
-    environment:
-      groups:
-        - firebase
-      ios_signing:
-          distribution_type: development
-          bundle_identifier: com.ios.apppreview
-      vars:
-        XCODE_SCHEME: "Runner"
-      cocoapods: default
-      cache:
-        cache_paths:
-           - ~/.gradle/caches
+    max_build_duration: 60
+    integrations:
+      app_store_connect: CM_Nevercode
     scripts:
-      - name: Run Flutter pub get
+      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
         script: |
-          flutter pub get
+          keychain initialize
+      - name: Fetch Mac App Distribution certificate and Mac App Store profile
+        script: |
+          app-store-connect fetch-signing-files \
+            $BUNDLE_ID \
+            --platform MAC_OS \
+            --type MAC_APP_STORE \
+            --create
+      - name: Fetch Mac Installer Distribution certificates
+        script: |
+          app-store-connect certificates list --type MAC_INSTALLER_DISTRIBUTION --save || \
+          app-store-connect certificates create --type MAC_INSTALLER_DISTRIBUTION --save          
+      - name: Set up signing certificate
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+      - name: Flutter analyze
+        script: |
+          flutter analyze
       - name: Install pods
         script: |
           find . -name "Podfile" -execdir pod install \;
-      - name: Profile
-        script:  xcode-project use-profiles
-      - name: Build
+      - name: Build Flutter macOS
         script: |
-             flutter build ipa --release \
-               --export-options-plist=/Users/builder/export_options.plist
-  # flutter build ios --debug --simulator
-    # xcodebuild -workspace "ios/Runner.xcworkspace" \
-    #   -scheme "Runner" \
-    #   -configuration "Debug" \
-    #   -sdk iphonesimulator \
-    #   -derivedDataPath ios/output
-      # - name: Sim
-      #   script: |
-      #       SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
-      #       echo "Booting device $SIMULATOR_ID"
-      #       export SIMULATOR_ID=$SIMULATOR_ID
-      #       xcrun simctl boot "$SIMULATOR_ID"
-      #       xcrun simctl install "$SIMULATOR_ID" build/ios/iphoneos/Runner.app
-      #       xcrun simctl listapps $SIMULATOR_ID
-      #       xcrun simctl list devices | grep "$SIMULATOR_ID"
-      #       xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
-      #       xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
+          flutter config --enable-macos-desktop && \
+          flutter build macos --release \
+            --build-name=1.0.$PROJECT_BUILD_NUMBER \
+            --build-number=$PROJECT_BUILD_NUMBER
+      - name: Package macOS application
+        script: |
+          set -x
 
+          # Command to find the path to your generated app
+          APP_NAME=$(find $(pwd) -name "*.app")
+          cd $(dirname "$APP_NAME")
+          PACKAGE_NAME=$(basename "$APP_NAME" .app).pkg
+
+          # Create an unsigned package
+          xcrun productbuild --component "$APP_NAME" /Applications/ unsigned.pkg
+
+          # Find the installer certificate commmon name in keychain
+          INSTALLER_CERT_NAME=$(keychain list-certificates \
+            | jq '.[]
+            | select(.common_name
+            | contains("Mac Developer Installer"))
+            | .common_name' \
+            | xargs)
+
+          # Sign the package
+          xcrun productsign --sign "$INSTALLER_CERT_NAME" unsigned.pkg "$PACKAGE_NAME"
     artifacts:
-        - build/ios/iphonesimulator/Runner.app
-        - build/ios/ipa/*.ipa
-    publishing:
-      firebase:
-         firebase_token: $FIREBASE_TOKEN
-         ios:
-            app_id: 1:1000832666927:ios:9fa19fbcf907fc4a11e5da
-            groups: 
-              - mars
+      - build/macos/**/*.pkg
+
+# workflows:
+#   ios-workflow:
+#     name: ios-workflow
+#     instance_type: mac_mini_m2
+#     max_build_duration: 120
+#     environment:
+#       groups:
+#         - firebase
+#       ios_signing:
+#           distribution_type: development
+#           bundle_identifier: com.ios.apppreview
+#       vars:
+#         XCODE_SCHEME: "Runner"
+#       cocoapods: default
+#       cache:
+#         cache_paths:
+#            - ~/.gradle/caches
+#     scripts:
+#       - name: Run Flutter pub get
+#         script: |
+#           flutter pub get
+#       - name: Install pods
+#         script: |
+#           find . -name "Podfile" -execdir pod install \;
+#       - name: Profile
+#         script:  xcode-project use-profiles
+#       - name: Build
+#         script: |
+#              flutter build ipa --release \
+#                --export-options-plist=/Users/builder/export_options.plist
+#   # flutter build ios --debug --simulator
+#     # xcodebuild -workspace "ios/Runner.xcworkspace" \
+#     #   -scheme "Runner" \
+#     #   -configuration "Debug" \
+#     #   -sdk iphonesimulator \
+#     #   -derivedDataPath ios/output
+#       # - name: Sim
+#       #   script: |
+#       #       SIMULATOR_ID="D99892F6-4608-4380-A3B3-BECB00E243B7"
+#       #       echo "Booting device $SIMULATOR_ID"
+#       #       export SIMULATOR_ID=$SIMULATOR_ID
+#       #       xcrun simctl boot "$SIMULATOR_ID"
+#       #       xcrun simctl install "$SIMULATOR_ID" build/ios/iphoneos/Runner.app
+#       #       xcrun simctl listapps $SIMULATOR_ID
+#       #       xcrun simctl list devices | grep "$SIMULATOR_ID"
+#       #       xcrun simctl spawn "$SIMULATOR_ID" launchctl print system
+#       #       xcrun simctl launch "$SIMULATOR_ID" com.example.apppreview
+
+#     artifacts:
+#         - build/ios/iphonesimulator/Runner.app
+#         - build/ios/ipa/*.ipa
+#     publishing:
+#       firebase:
+#          firebase_token: $FIREBASE_TOKEN
+#          ios:
+#             app_id: 1:1000832666927:ios:9fa19fbcf907fc4a11e5da
+#             groups: 
+#               - mars
